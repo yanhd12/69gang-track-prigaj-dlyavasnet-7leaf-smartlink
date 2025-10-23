@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ПРЫГАЙ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#0b0b0b;
+      --card:#161617;
+      --muted:#9a9a9a;
+      --accent:#c5c5c5;
+      --radius:18px;
+    }
+    * {box-sizing:border-box}
+    html,body {
+      height:100%;
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      color:#fff;
+      background:var(--bg);
+    }
+
+    .bg {
+      position:fixed;
+      inset:0;
+      z-index:0;
+      overflow:hidden;
+    }
+    .bg::before {
+      content:"";
+      position:absolute;
+      inset:-10%;
+      background-size:cover;
+      background-position:center center;
+      filter:blur(30px) saturate(120%);
+      transform:scale(1.05);
+      background-image:var(--cover-url);
+    }
+    .bg::after {
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(180deg,rgba(0,0,0,0.45),rgba(0,0,0,0.75));
+    }
+
+    .wrap {
+      position:relative;
+      z-index:2;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      padding:32px 16px;
+      min-height:100vh;
+      flex-direction:column;
+    }
+
+    .card {
+      width:360px;
+      max-width:calc(100% - 32px);
+      background:linear-gradient(180deg,rgba(20,20,20,0.95),rgba(12,12,12,0.95));
+      border-radius:22px;
+      overflow:hidden;
+      box-shadow:0 10px 40px rgba(0,0,0,0.6);
+      margin:auto;
+    }
+
+    .tabs {
+      display:flex;
+      gap:12px;
+      padding:12px 18px 6px;
+    }
+    .tabs button {
+      background:transparent;
+      border:none;
+      color:var(--muted);
+      font-weight:600;
+      padding:8px 6px;
+      border-radius:10px;
+      cursor:pointer;
+    }
+    .tabs button.active {
+      color:#fff;
+      border-bottom:3px solid var(--accent);
+      padding-bottom:4px;
+    }
+
+    .cover {
+      width:100%;
+      height:320px;
+      background-size:cover;
+      background-position:center;
+      display:block;
+    }
+
+    .meta {
+      padding:16px;
+      background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+    }
+    .meta .info {flex:1}
+    .artist {
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:700;
+      font-size:20px;
+    }
+    .subtitle {
+      color:var(--muted);
+      margin-top:6px;
+      font-size:14px;
+      line-height:1.3;
+    }
+    .share {
+      width:48px;
+      height:48px;
+      border-radius:50%;
+      background:rgba(255,255,255,0.03);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      margin-left:8px;
+    }
+
+    .links {
+      background:var(--card);
+      padding:8px;
+      border-top:1px solid rgba(255,255,255,0.02);
+    }
+    .item {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:14px;
+      border-bottom:1px solid rgba(255,255,255,0.02);
+    }
+    .item img.icon {
+      width:44px;
+      height:44px;
+      border-radius:10px;
+      object-fit:cover;
+    }
+    .item .name {
+      flex:1;
+      font-weight:600;
+    }
+    .play {
+      min-width:84px;
+      height:40px;
+      border-radius:12px;
+      border:none;
+      background:var(--accent);
+      color:#fff;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    /* ——— Блок снизу ——— */
+    .footer {
+      text-align:center;
+      padding:20px 10px 10px;
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.5;
+      background:rgba(255,255,255,0.02);
+      border-top:1px solid rgba(255,255,255,0.03);
+    }
+
+    .tg-links {
+      display:flex;
+      justify-content:center;
+      gap:24px;
+      margin-top:12px;
+    }
+
+    .tg-links a img {
+      width:36px;
+      height:36px;
+      opacity:0.35;
+      filter:grayscale(100%);
+      transition:opacity 0.3s ease, filter 0.3s ease;
+    }
+
+    .tg-links a img:hover {
+      opacity:0.8;
+      filter:grayscale(0%);
+    }
+
+    .copyright {
+      text-align:center;
+      font-size:14px;
+      margin-top:10px;
+      color:#6f6f6f;
+      letter-spacing:0.5px;
+    }
+
+    @media (max-width:420px){
+      .card{width:100%;height:auto;border-radius:28px}
+      .cover{height:420px}
+      .play{min-width:100px}
+    }
+  </style>
+</head>
+<body>
+  <div class="bg" aria-hidden="true"></div>
+
+  <div class="wrap">
+    <main class="card" role="main">
+      <div class="tabs">
+        <button class="active">Release</button>
+      </div>
+
+      <div class="cover" id="cover" style="background-image:url('https://i.postimg.cc/50DS8dZb/Bez-imeni-1.jpg')" aria-hidden="true"></div>
+
+      <div class="meta">
+        <div class="info">
+          <div class="artist"><span>ПРЫГАЙ</span></div>
+          <div class="subtitle">dlyavasnet, 7leaf</div>
+        </div>
+        <button class="share" title="Share" onclick="navigator.share ? navigator.share({title:'ПРЫГАЙ — dlyavasnet,7leaf',url:location.href}) : alert('Поделиться: '+location.href)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 12v7a1 1 0 0 0 1 1h14" stroke="rgba(255,255,255,0.6)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M16 6l-4-4-4 4" stroke="rgba(255,255,255,0.6)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M12 2v14" stroke="rgba(255,255,255,0.6)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        </button>
+      </div>
+
+      <section class="links" aria-label="Ссылки на платформы">
+
+        <div class="item">
+          <img class="icon" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_qMG_BQZZZlEbbULPATS9DE6hyxWiZmO4vg&s" alt="SC">
+          <div class="name">SoundCloud</div>
+          <button class="play" onclick="openLink('https://soundcloud.com/')">Play</button>
+        </div>
+
+         <div class="item">
+          <img class="icon" src="https://s3-alpha.figma.com/hub/file/2734964093/9f5edc36-eb4d-414a-8447-10514f2bc224-cover.png" alt="Spotify">
+          <div class="name">Spotify</div>
+          <button class="play" onclick="openLink('https://spotify.com/')">Скоро!</button>
+        </div>
+
+        <div class="item">
+          <img class="icon" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9GcypLa5Ngcc3CN08ZMkQFdRNyCxS1d2wWA&s" alt="ЯМузыка">
+          <div class="name">ЯМузыка</div>
+          <button class="play" onclick="openLink('https://music.yandex.ru/')">Скоро!</button>
+        </div>
+
+        <div class="item">
+          <img class="icon" src="https://www.pngmart.com/files/23/Youtube-Music-Logo-PNG-Pic.png" alt="YouTube Music">
+          <div class="name">YouTube Music</div>
+          <button class="play" onclick="openLink('https://music.youtube.com/')">Скоро!</button>
+        </div>
+
+        <div class="item">
+          <img class="icon" src="https://assets.stickpng.com/thumbs/60394f92b6264f0004079c19.png" alt="Apple Music">
+          <div class="name">Apple Music</div>
+          <button class="play" onclick="openLink('https://music.apple.com/')">Скоро!</button>
+        </div>
+      </section>
+
+      <!-- Новый блок под Smart Link -->
+      <div class="footer">
+        <div>Данный трек не имеет цели кого-либо оскорбить,<br>все события и персонажи вымышлены.</div>
+
+        <div class="tg-links">
+          <a href="t.me/dlyavasnet" target="_blank" title="Telegram 1">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram 1">
+          </a>
+          <a href="https://t.me/dj7leaf" target="_blank" title="Telegram 2">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram 2">
+          </a>
+        </div>
+
+        <div class="copyright">©69GANG</div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    function openLink(url){
+      window.open(url, '_blank');
+    }
+
+    // Фон совпадает с обложкой
+    const cover = document.getElementById('cover').style.backgroundImage;
+    document.documentElement.style.setProperty('--cover-url', cover);
+  </script>
+</body>
+</html>
